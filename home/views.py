@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from home.models import Person
 from home.serializers import PeopleSerializer
 
+
 @api_view(['GET', 'POST'])
 def index(request):
     courses = {
@@ -23,7 +24,7 @@ def index(request):
         return Response(courses)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def person(request):
     if request.method == 'GET':
         objs = Person.objects.all()
@@ -38,3 +39,30 @@ def person(request):
             return Response(serializer.data)
         
         return Response(serializer.errors)
+    
+    elif request.method == 'PUT':
+        data = request.data
+        refObj = Person.objects.get(id=data['id'])
+        serializer=PeopleSerializer(instance=refObj , data=request.data)
+        # serializer = PeopleSerializer(data = data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors)
+    
+    elif request.method == 'PATCH':
+        data = request.data
+        obj = Person.objects.get(id=data['id'])
+        serializer = PeopleSerializer(obj, data = data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors)
+    
+    elif request.method == 'DELETE':
+        data = request.data
+        obj = Person.objects.get(id=data['id'])
+        obj.delete()
+        return Response({'msg': 'Data deleted successfully'})   
