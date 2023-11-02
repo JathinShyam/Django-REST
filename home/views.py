@@ -10,6 +10,10 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication, BasicAuthentication
+from django.core.paginator import Paginator
+from rest_framework.decorators import action
 
 
 class LoginAPI(APIView):
@@ -39,6 +43,7 @@ class LoginAPI(APIView):
         },
         status=status.HTTP_200_OK)
 
+
 class RegisterAPI(APIView):
     def post(self, request):
         data = request.data
@@ -57,10 +62,24 @@ class RegisterAPI(APIView):
         },
         status=status.HTTP_201_CREATED)
 
+
 class PersonAPI(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, BasicAuthentication]
     def get(self, request):
-        objs = Person.objects.filter(color__isnull=False)
-        serializer = PeopleSerializer(objs, many=True)
+        print(request.user)
+        objs = Person.objects.all()
+        page = request.GET.get('page', 1)
+        page_size = 3
+        try:
+            paginator = Paginator(objs, page_size)
+            serializer = PeopleSerializer(paginator.page(page), many=True)
+        except Exception as e:
+            return Response({
+                'status' : False,
+                'message' : str(e)
+            })
+        
         return Response(serializer.data)
         # return Response({'message' : 'This is a get request'})
     
@@ -182,6 +201,7 @@ def person(request):
 class PeopleViewSet(viewsets.ModelViewSet):
     serializer_class = PeopleSerializer
     queryset = Person.objects.all()
+    # http_method_names = ['get', 'post']
 
     def list(self, request):
         search = request.GET.get('search')
@@ -190,3 +210,21 @@ class PeopleViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(name__startswith=search)
         serializer = PeopleSerializer(queryset, many=True)
         return Response({'status': 200, 'data' : serializer.data})
+    
+    # @action(detail=False, methods=['POST'])
+    # def send_mail_to_person(self, request):
+    #     return Response({
+    #         'status' : True,
+    #         'message' : 'Mail sent successfully'
+    #     })
+    
+    @action(detail=True, methods=['POST'])
+    def send_mail_to_person(self, request, pk):
+        print(pk)
+        obj = Person.objects.get(pk=pk)
+        serializer = PeopleSerializer(obj)
+        return Response({
+            'status' : True,
+            'message' : 'Mail sent successfully',
+            'data' : serializer.data
+        })
