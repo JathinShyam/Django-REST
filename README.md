@@ -103,11 +103,11 @@ Now that you have Postman installed, you can use it to interact with the APIs yo
 
 ## Credits
 
-We would like to express our gratitude to [Scalar Academy](https://www.scalaracademy.com/) for their valuable contributions to this project. Scalar Academy offers comprehensive courses and resources on web development and programming, and their guidance has been instrumental in the development of this repository.
+We would like to express our gratitude to [Scalar Academy](https://www.scaler.com/) for their valuable contributions to this project. Scalar Academy offers comprehensive courses and resources on web development and programming, and their guidance has been instrumental in the development of this repository.
 
 We also want to thank the open-source community and the contributors who have made this project possible through their suggestions, bug reports, and code contributions. Your support and collaboration are greatly appreciated.
 
-- [Scalar Academy](https://www.scalaracademy.com/): For providing educational content and resources related to web development and programming.
+- [Scalar Academy](https://www.scalar.com/): For providing educational content and resources related to web development and programming.
 
 - Open Source Contributors: A big shout-out to all the developers who have helped make this project better through their contributions.
 
